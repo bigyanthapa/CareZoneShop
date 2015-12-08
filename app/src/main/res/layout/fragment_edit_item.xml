@@ -1,0 +1,55 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="carezoneshop.bigyan.com.carezoneshopping.fragments.EditItem">
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="You are About to Delete this Item"
+        android:id="@+id/textView"
+        android:textSize="25dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="38dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:id="@+id/editItemNameTextView"
+        android:layout_below="@+id/textView"
+        android:layout_alignLeft="@+id/textView"
+        android:layout_alignStart="@+id/textView"
+        android:layout_marginTop="38dp"
+        android:textSize="20dp"
+        android:padding="5dp"
+        android:hint="Item name here" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:id="@+id/editItemCategoryTextView"
+        android:layout_below="@+id/editItemNameTextView"
+        android:layout_alignLeft="@+id/editItemNameTextView"
+        android:layout_alignStart="@+id/editItemNameTextView"
+        android:layout_marginTop="38dp"
+        android:textSize="20dp"
+        android:padding="5dp"
+        android:hint="Item category here" />
+
+    <Button
+        android:layout_width="120dp"
+        android:layout_height="50dp"
+        android:text="Delete"
+        android:id="@+id/editItemDeleteButton"
+        android:layout_below="@+id/editItemCategoryTextView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="64dp"
+        android:padding="5dp"
+        android:textSize="25dp" />
+</RelativeLayout>
