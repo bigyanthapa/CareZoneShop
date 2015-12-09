@@ -1,19 +1,18 @@
 package carezoneshop.bigyan.com.carezoneshopping.activities;
 
 import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ExpandableListView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,7 +22,6 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import carezoneshop.bigyan.com.carezoneshopping.R;
 import carezoneshop.bigyan.com.carezoneshopping.adapter.ExpandableListAdapter;
-import carezoneshop.bigyan.com.carezoneshopping.fragments.AddItem;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -37,14 +35,16 @@ public class MainActivity extends AppCompatActivity {
     @InjectView(R.id.toolbar)
     Toolbar toolbar;
 
-    @InjectView(R.id.myFAB)
-     FloatingActionButton myFab;
+    @InjectView(R.id.fab_add_item)
+     FloatingActionButton fab_add_item;
 
     boolean isLoading = true;
 
     Fragment fragment = null;
 
     ExpandableListAdapter listAdapter;
+
+    Intent mIntent;
 
     @InjectView(R.id.expandableList)
     ExpandableListView expListView;
@@ -66,6 +66,14 @@ public class MainActivity extends AppCompatActivity {
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
 
+        fab_add_item.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mIntent = new Intent(MainActivity.this, AddItem.class);
+                startActivity(mIntent);
+            }
+        });
+
         // preparing list data
         prepareListData();
 
@@ -74,26 +82,18 @@ public class MainActivity extends AppCompatActivity {
         // setting list adapter
         expListView.setAdapter(listAdapter);
 
-        //Display Add ItemModel fragment when this floating button is clicked
-        myFab.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
+        //add action listener when any sub-item is clicked on the list
+        expListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+            @Override
+            public boolean onChildClick(ExpandableListView expandableListView, View view, int i, int i1, long l) {
+                mIntent = new Intent(MainActivity.this, EditItem.class);
+                startActivity(mIntent);
 
-                fragment = new AddItem();
-                if (fragment != null) {
-                    FragmentManager fm = getFragmentManager();
-                    FragmentTransaction fragmentTransaction = fm.beginTransaction();
-                    fragmentTransaction.setCustomAnimations(android.R.animator.fade_in,
-                            android.R.animator.fade_out);
-
-                    fragmentTransaction.replace(R.id.content_swipe_refresh, fragment);
-
-                    fragmentTransaction.commit();
-                } else {
-                    // error in creating fragment
-                    Log.e("MainActivity", "Error in creating fragment");
-                }
+                return false;
             }
         });
+
+
     }
 
     /*
@@ -165,7 +165,9 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_share_app) {
+            Toast.makeText(this, "This will allow Sharing apps to Social Media", Toast.LENGTH_SHORT).show();
+
             return true;
         }
 

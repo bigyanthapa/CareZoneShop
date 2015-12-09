@@ -9,47 +9,36 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="You are About to Delete this Item"
+        android:text="Delete This Item"
         android:id="@+id/textView"
         android:textSize="25dp"
+        android:layout_marginTop="85dp"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="38dp" />
+        android:layout_centerHorizontal="true" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:id="@+id/editItemNameTextView"
-        android:layout_below="@+id/textView"
-        android:layout_alignLeft="@+id/textView"
-        android:layout_alignStart="@+id/textView"
-        android:layout_marginTop="38dp"
+        android:layout_marginTop="77dp"
         android:textSize="20dp"
         android:padding="5dp"
-        android:hint="Item name here" />
+        android:hint="Item name here"
+        android:layout_below="@+id/textView"
+        android:layout_centerHorizontal="true" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:id="@+id/editItemCategoryTextView"
-        android:layout_below="@+id/editItemNameTextView"
-        android:layout_alignLeft="@+id/editItemNameTextView"
-        android:layout_alignStart="@+id/editItemNameTextView"
-        android:layout_marginTop="38dp"
         android:textSize="20dp"
         android:padding="5dp"
-        android:hint="Item category here" />
+        android:hint="Item category here"
+        android:layout_centerVertical="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
-    <Button
-        android:layout_width="120dp"
-        android:layout_height="50dp"
-        android:text="Delete"
-        android:id="@+id/editItemDeleteButton"
-        android:layout_below="@+id/editItemCategoryTextView"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="64dp"
-        android:padding="5dp"
-        android:textSize="25dp" />
 </RelativeLayout>
+
