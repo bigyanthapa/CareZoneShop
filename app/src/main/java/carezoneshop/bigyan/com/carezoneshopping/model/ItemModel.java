@@ -1,20 +1,22 @@
 package carezoneshop.bigyan.com.carezoneshopping.model;
 
+import java.util.List;
+
 /**
  * Created by bigyanthapa on 12/7/15.
  */
 public class ItemModel {
 
-    private String itemName;
+    private List<String> itemName;
     private String itemCategory;
 
     public ItemModel(){}
 
-    public String getItemName() {
+    public List<String> getItemName() {
         return itemName;
     }
 
-    public void setItemName(String itemName) {
+    public void setItemName(List<String> itemName) {
         this.itemName = itemName;
     }
 

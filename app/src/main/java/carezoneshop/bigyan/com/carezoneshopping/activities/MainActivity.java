@@ -14,6 +14,7 @@ import android.widget.ExpandableListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,10 +22,17 @@ import java.util.List;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import carezoneshop.bigyan.com.carezoneshopping.R;
+import carezoneshop.bigyan.com.carezoneshopping.ServiceGenerator;
 import carezoneshop.bigyan.com.carezoneshopping.adapter.ExpandableListAdapter;
+import carezoneshop.bigyan.com.carezoneshopping.model.ItemModel;
+import retrofit.Call;
 
 
 public class MainActivity extends AppCompatActivity {
+
+    private final String mTOKEN = "H75qYRieqfAxveQvReL5";
+    public static final String URL = "https://czshopper.herokuapp.com";
+    public static final String UPDATEURL = "https://czshopper.herokuapp.com/items/";
 
     @InjectView(R.id.content_swipe_refresh)
     SwipeRefreshLayout mSwipeRefreshLayout;
@@ -52,6 +60,8 @@ public class MainActivity extends AppCompatActivity {
     List<String> listDataHeader;
     HashMap<String, List<String>> listDataChild;
 
+    List<ItemModel> itemModelList;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,6 +75,9 @@ public class MainActivity extends AppCompatActivity {
 
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
+
+
+        getData(URL);
 
         fab_add_item.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -92,6 +105,26 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
+
+
+    }
+
+
+    //get data from api and populate the list
+    public void getData(String base_url){
+
+        CarezoneService carezoneService = ServiceGenerator.createService(CarezoneService.class, mTOKEN);
+        Call<List<ItemModel>> call = carezoneService.items("category", "name");
+
+        try {
+            itemModelList = call.execute().body();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        for (ItemModel item : itemModelList) {
+            Toast.makeText(MainActivity.this, "Category"+item.getItemCategory()+" name"+item.getItemName(), Toast.LENGTH_SHORT).show();
+        }
 
 
     }
