@@ -1,99 +1,87 @@
 package carezoneshop.bigyan.com.carezoneshopping.activities;
 
-import android.app.Fragment;
+
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ExpandableListView;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import java.io.IOException;
+import com.android.volley.AuthFailureError;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Map;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import carezoneshop.bigyan.com.carezoneshopping.R;
-import carezoneshop.bigyan.com.carezoneshopping.ServiceGenerator;
-import carezoneshop.bigyan.com.carezoneshopping.adapter.ExpandableListAdapter;
-import carezoneshop.bigyan.com.carezoneshopping.model.ItemModel;
-import retrofit.Call;
+import carezoneshop.bigyan.com.carezoneshopping.adapter.ExpandListAdapter;
+import carezoneshop.bigyan.com.carezoneshopping.app.AppController;
+import carezoneshop.bigyan.com.carezoneshopping.model.Child;
+import carezoneshop.bigyan.com.carezoneshopping.model.Items;
 
-
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends Activity {
 
     private final String mTOKEN = "H75qYRieqfAxveQvReL5";
-    public static final String URL = "https://czshopper.herokuapp.com";
-    public static final String UPDATEURL = "https://czshopper.herokuapp.com/items/";
+    private String myURL = "https://czshopper.herokuapp.com/items.json";
 
+
+   //View Injection Using ButterKnife
     @InjectView(R.id.content_swipe_refresh)
     SwipeRefreshLayout mSwipeRefreshLayout;
-
-    @InjectView(R.id.progress_bar)
-    ProgressBar mProgressBar;
-
-    @InjectView(R.id.toolbar)
-    Toolbar toolbar;
 
     @InjectView(R.id.fab_add_item)
      FloatingActionButton fab_add_item;
 
-    boolean isLoading = true;
-
-    Fragment fragment = null;
-
-    ExpandableListAdapter listAdapter;
-
-    Intent mIntent;
-
     @InjectView(R.id.expandableList)
     ExpandableListView expListView;
 
-    List<String> listDataHeader;
-    HashMap<String, List<String>> listDataChild;
+    // Object Declaration
+    private ExpandListAdapter expandListAdapter;
+    private Intent mIntent;
 
-    List<ItemModel> itemModelList;
+    // Progress dialog
+    private ProgressDialog pDialog;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
         ButterKnife.inject(this);
 
-        hideProgress();
+        pDialog = new ProgressDialog(this);
+        pDialog.setMessage("Loading Items...");
+        pDialog.setCancelable(false);
 
-        toolbar.setTitle("");
-        setSupportActionBar(toolbar);
 
+        //Get data from webservice and populate the list view
+        makeJSONArrayRequest(myURL);
 
-        getData(URL);
-
+        //Add Item Activity is opened when FAB button is clicked
         fab_add_item.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mIntent = new Intent(MainActivity.this, AddItem.class);
                 startActivity(mIntent);
+
+
             }
         });
 
-        // preparing list data
-        prepareListData();
-
-        listAdapter = new ExpandableListAdapter(this, listDataHeader, listDataChild);
-
-        // setting list adapter
-        expListView.setAdapter(listAdapter);
 
         //add action listener when any sub-item is clicked on the list
         expListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
@@ -109,101 +97,113 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    // Call the Webservice and populate the Expandable List
+    private void makeJSONArrayRequest(String url){
+        showpDialog();
+        JsonArrayRequest req = new JsonArrayRequest(url,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        ArrayList<Items> item_list = new ArrayList<>();
+                        ArrayList<Child> ch_list;
 
-    //get data from api and populate the list
-    public void getData(String base_url){
+                        Map<String, String> newMap = new HashMap<>();
 
-        CarezoneService carezoneService = ServiceGenerator.createService(CarezoneService.class, mTOKEN);
-        Call<List<ItemModel>> call = carezoneService.items("category", "name");
+                        String value ="";
 
-        try {
-            itemModelList = call.execute().body();
-        } catch (IOException e) {
-            e.printStackTrace();
+                        try {
+                            // Parsing json array response
+                            // loop through each json object
+
+                            for (int i = 0; i < response.length(); i++) {
+
+                                JSONObject item = (JSONObject)response.get(i);
+
+                                if(newMap.containsKey(item.getString("category"))){
+                                    value = newMap.get(item.getString("category")) +","+item.getString("name");
+                                    newMap.put(item.getString("category"), value);
+                                }else{
+                                    newMap.put(item.getString("category"), item.getString("name"));
+                                }
+
+
+                            }//For Loop end
+
+
+                            //now prepare data
+
+                            for (Map.Entry<String, String> entry : newMap.entrySet()){
+                                Items item2 = new Items();
+                                Child child ;
+                                String[] childArray = null;
+                                ch_list = new ArrayList<>();
+
+                                item2.setCategory(entry.getKey());
+
+                                childArray = entry.getValue().split(",");
+                                for(String s: childArray){
+                                    child = new Child();
+                                    child.setName(s);
+                                    ch_list.add(child);
+                                }
+                                item2.setChildList(ch_list);
+                                item_list.add(item2);
+
+                            }
+
+                            expandListAdapter = new ExpandListAdapter(
+                                    MainActivity.this, item_list);
+                            expListView.setAdapter(expandListAdapter);
+
+                            hidepDialog();
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Toast.makeText(getApplicationContext(),
+                                    "Error: " + e.getMessage(),
+                                    Toast.LENGTH_LONG).show();
+                        }
+
+                        hidepDialog();
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                Toast.makeText(getApplicationContext(),
+                        error.getMessage(), Toast.LENGTH_SHORT).show();
+                hidepDialog();
+            }
+        })
+        {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String>  headers = new HashMap<>();
+                headers.put("X-CZ-Authorization", "H75qYRieqfAxveQvReL5");
+                headers.put("Accept", "application/json");
+
+                return headers;
+            }
+
+        };
+
+        AppController.getInstance().addToRequestQueue(req);
+
+    }
+
+    private void showpDialog() {
+        if (!pDialog.isShowing()) {
+            pDialog.show();
+            mSwipeRefreshLayout.setVisibility(View.INVISIBLE);
         }
+    }
 
-        for (ItemModel item : itemModelList) {
-            Toast.makeText(MainActivity.this, "Category"+item.getItemCategory()+" name"+item.getItemName(), Toast.LENGTH_SHORT).show();
+    private void hidepDialog() {
+        if (pDialog.isShowing()) {
+            pDialog.dismiss();
+            mSwipeRefreshLayout.setVisibility(View.VISIBLE);
         }
-
-
-    }
-
-    /*
-     * Preparing the list data
-     */
-    private void prepareListData() {
-        listDataHeader = new ArrayList<String>();
-        listDataChild = new HashMap<String, List<String>>();
-
-        // Adding child data
-        listDataHeader.add("Top 250");
-        listDataHeader.add("Now Showing");
-        listDataHeader.add("Coming Soon..");
-
-        // Adding child data
-        List<String> top250 = new ArrayList<String>();
-        top250.add("The Shawshank Redemption");
-        top250.add("The Godfather");
-        top250.add("The Godfather: Part II");
-        top250.add("Pulp Fiction");
-        top250.add("The Good, the Bad and the Ugly");
-        top250.add("The Dark Knight");
-        top250.add("12 Angry Men");
-
-        List<String> nowShowing = new ArrayList<String>();
-        nowShowing.add("The Conjuring");
-        nowShowing.add("Despicable Me 2");
-        nowShowing.add("Turbo");
-        nowShowing.add("Grown Ups 2");
-        nowShowing.add("Red 2");
-        nowShowing.add("The Wolverine");
-
-        List<String> comingSoon = new ArrayList<String>();
-        comingSoon.add("2 Guns");
-        comingSoon.add("The Smurfs 2");
-        comingSoon.add("The Spectacular Now");
-        comingSoon.add("The Canyons");
-        comingSoon.add("Europa Report");
-
-        listDataChild.put(listDataHeader.get(0), top250); // Header, Child data
-        listDataChild.put(listDataHeader.get(1), nowShowing);
-        listDataChild.put(listDataHeader.get(2), comingSoon);
     }
 
 
-    public void showProgress() {
-        mProgressBar.setVisibility(View.VISIBLE);
-        mSwipeRefreshLayout.setVisibility(View.INVISIBLE);
-    }
-
-    public void hideProgress() {
-        mProgressBar.setVisibility(View.INVISIBLE);
-        mSwipeRefreshLayout.setVisibility(View.VISIBLE);
-    }
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_share_app) {
-            Toast.makeText(this, "This will allow Sharing apps to Social Media", Toast.LENGTH_SHORT).show();
-
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 }
