@@ -1,44 +1,99 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="carezoneshop.bigyan.com.carezoneshopping.fragments.EditItem">
 
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Delete This Item"
-        android:id="@+id/textView"
-        android:textSize="25dp"
-        android:layout_marginTop="85dp"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
-
-    <TextView
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:id="@+id/editItemNameTextView"
-        android:layout_marginTop="77dp"
-        android:textSize="20dp"
-        android:padding="5dp"
-        android:hint="Item name here"
-        android:layout_below="@+id/textView"
-        android:layout_centerHorizontal="true" />
+        android:layout_height="match_parent"
+        tools:context="carezoneshop.bigyan.com.carezoneshopping.activities.EditItem">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:id="@+id/editItemCategoryTextView"
-        android:textSize="20dp"
-        android:padding="5dp"
-        android:hint="Item category here"
-        android:layout_centerVertical="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            >
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:orientation="vertical"
+                android:layout_marginTop="50dp">
 
-</RelativeLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textStyle="bold"
+                    android:text="Delete This Item"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:id="@+id/editTitleTextView"
+                    android:textSize="25dp"
+                    android:layout_marginTop="85dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_gravity="center_horizontal" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="400dp"
+                android:orientation="vertical"
+                android:layout_marginTop="200dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="Category"
+                    android:textColor="@color/colorPrimary"
+                    android:id="@+id/categoryView"
+                    android:layout_above="@+id/editItemCategoryTextView"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:textSize="20dp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:id="@+id/editItemCategoryTextView"
+                    android:hint="Item Category Here"
+                    android:textSize="20dp"
+                    android:padding="5dp"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="Name"
+                    android:textColor="@color/colorPrimary"
+                    android:id="@+id/nameView"
+                    android:layout_above="@+id/editItemNameTextView"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:textSize="20dp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:id="@+id/editItemNameTextView"
+                    android:textSize="20dp"
+                    android:padding="5dp"
+                    android:hint="Item name here"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginBottom="144dp" />
+
+            </LinearLayout>
+
+
+
+            </RelativeLayout>
+
+
+    </ScrollView>
 

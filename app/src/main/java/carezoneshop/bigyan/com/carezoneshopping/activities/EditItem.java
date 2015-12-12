@@ -7,11 +7,15 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import carezoneshop.bigyan.com.carezoneshopping.R;
 
 public class EditItem extends AppCompatActivity {
+
+    private TextView category;
+    private TextView name;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,6 +23,12 @@ public class EditItem extends AppCompatActivity {
         setContentView(R.layout.activity_edit_item);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        category = (TextView)findViewById(R.id.editItemCategoryTextView);
+        name = (TextView)findViewById(R.id.editItemNameTextView);
+
+        category.setText(getIntent().getStringExtra("parent"));
+        name.setText(getIntent().getStringExtra("child"));
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {

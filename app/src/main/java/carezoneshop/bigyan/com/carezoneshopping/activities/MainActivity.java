@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
@@ -55,6 +56,9 @@ public class MainActivity extends Activity {
     // Progress dialog
     private ProgressDialog pDialog;
 
+    //List of Items
+    ArrayList<Items> item_list = new ArrayList<>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,15 +86,45 @@ public class MainActivity extends Activity {
             }
         });
 
-
         //add action listener when any sub-item is clicked on the list
         expListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
-            public boolean onChildClick(ExpandableListView expandableListView, View view, int i, int i1, long l) {
+            public boolean onChildClick(ExpandableListView expandableListView, View view, int parentPosition, int childPosition, long l) {
+
+
+                Items item = item_list.get(parentPosition);
+                String category = item.getCategory();
+
+                ArrayList<Child> child_list = item.getChildList();
+                Child child = child_list.get(childPosition);
+                String childName = child.getName();
+
+               // Toast.makeText(MainActivity.this, ""+category+" "+childName,Toast.LENGTH_LONG).show();
                 mIntent = new Intent(MainActivity.this, EditItem.class);
+                mIntent.putExtra("parent", category);
+                mIntent.putExtra("child", childName);
                 startActivity(mIntent);
 
                 return false;
+
+            }
+        });
+
+        //implement swipe refresh listener
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mSwipeRefreshLayout.setRefreshing(true);
+
+                ( new Handler()).postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        mSwipeRefreshLayout.setRefreshing(false);
+                        item_list.clear();
+                        makeJSONArrayRequest(myURL);
+
+                    }
+                }, 3000);
             }
         });
 
@@ -104,7 +138,7 @@ public class MainActivity extends Activity {
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
-                        ArrayList<Items> item_list = new ArrayList<>();
+
                         ArrayList<Child> ch_list;
 
                         Map<String, String> newMap = new HashMap<>();
